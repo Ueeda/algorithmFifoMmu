@@ -1,18 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
 
 char arquivo[] = "arquivos/arquivo1.txt";
 
 int fitaMemoria[4] = {-1, -1, -1, -1};
-int quantidadeTrocaFrames = 0;
+int tamanho = sizeof(fitaMemoria) / sizeof(fitaMemoria[0]);
+int quantidadeRequisicoes = 0;
+int quantidadeTrocas = 0;
 int ultimaPosicao = 0;
 char ch[10];
 int valorAtual = 0;
+bool flag = false;
+int i = 0;
 
 void manipulandoArquivo();
+void printaFita();
 
 void main(){
-	
 	
 	manipulandoArquivo();
 	
@@ -29,7 +35,6 @@ void manipulandoArquivo(){
 		fgets(ch,9,arq);
 		valorAtual = atoi(ch);
 		
-		int tamanho = sizeof(fitaMemoria) / sizeof(fitaMemoria[0]);
 		if(fitaMemoria[ultimaPosicao] == -1){
 			fitaMemoria[ultimaPosicao] = valorAtual;
 			if(ultimaPosicao == 3){
@@ -41,26 +46,37 @@ void manipulandoArquivo(){
 				
 		}
 		else{
-			int i;
-			for(i = 0; i < sizeof(fitaMemoria); i++){
-				if(fitaMemoria[i] == valorAtual)
-					continue;
-				else{
-					fitaMemoria[ultimaPosicao] = valorAtual;
-					quantidadeTrocaFrames++;
-					if(ultimaPosicao == 3)
-						ultimaPosicao = 0;
-					else
-						ultimaPosicao++;
+			for(i = 0; i < tamanho; i++){
+				if(fitaMemoria[i] == valorAtual){
+					flag = true;
 					break;
 				}
 			}
-			
+			if(flag == false){
+				fitaMemoria[ultimaPosicao] = valorAtual;
+				quantidadeTrocas++;
+				if(ultimaPosicao == 3)
+					ultimaPosicao = 0;
+				else
+					ultimaPosicao++;
+			}
+			quantidadeRequisicoes++;
+			flag = false;			
 		}
 		
+		printf("--------------------------------------\n");
+		printf("Página pedida: %d\n", valorAtual);
+		printaFita();
+		printf("\nQuantidade de requisicoes: %d \n", quantidadeRequisicoes);
+		printf("Quantidade de trocas: %d\n\n", quantidadeTrocas);	
 	}
 	
-	printf("Quantidade de trocas: %d", quantidadeTrocaFrames);
-	
 	fclose(arq);
+}
+
+void printaFita(){
+	printf("Fita: ");
+	for(i = 0; i < tamanho; i++){
+		printf("%d ", fitaMemoria[i]);
+	}
 }
